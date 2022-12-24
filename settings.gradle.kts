@@ -1,5 +1,6 @@
 rootProject.name = "web"
 
 include(
-    "socket"
+    "servlet",
+    "socket",
 )

@@ -6,19 +6,20 @@ plugins {
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
-idea {
-    module {
-        isDownloadSources = true
-        isDownloadJavadoc = true
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
 subprojects {
     apply(plugin = "java")
+    apply(plugin = "idea")
+
+    idea {
+        module {
+            isDownloadSources = true
+            isDownloadJavadoc = true
+        }
+    }
 
     dependencies {
         implementation("org.slf4j:slf4j-api:2.0.6")

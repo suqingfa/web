@@ -1,8 +1,7 @@
 package org.example.client;
 
-import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -77,12 +76,10 @@ class HTTPClientTest {
         String body = test(request);
 
         ObjectMapper mapper = new ObjectMapper();
-        TreeNode tree = mapper.readTree(body);
-        assertTrue(tree.isObject());
-        TreeNode origin = tree.get("origin");
+        JsonNode node = mapper.readTree(body);
+        assertTrue(node.isObject());
+        JsonNode origin = node.get("origin");
         assertTrue(origin.isValueNode());
-        if (origin instanceof TextNode text) {
-            log.info("origin: {}", text.asText());
-        }
+        log.info("origin: {}", origin.asText());
     }
 }

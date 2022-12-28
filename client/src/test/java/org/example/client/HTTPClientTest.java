@@ -1,5 +1,8 @@
 package org.example.client;
 
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HTTPClientTest {
     private static final Logger log = LoggerFactory.getLogger(HTTPClientTest.class);
@@ -25,13 +29,14 @@ class HTTPClientTest {
                 .build();
     }
 
-    private void test(HttpRequest request) throws IOException, InterruptedException {
+    private String test(HttpRequest request) throws IOException, InterruptedException {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
         log.info("response version: {}", response.version());
         log.info("response headers: {}", response.headers());
-        log.info("response body: {}", response.body());
+        log.info("response body length: {}", response.body().length());
+        return response.body();
     }
 
     @Test
@@ -69,6 +74,15 @@ class HTTPClientTest {
                 .build();
 
         log.info("post json test");
-        test(request);
+        String body = test(request);
+
+        ObjectMapper mapper = new ObjectMapper();
+        TreeNode tree = mapper.readTree(body);
+        assertTrue(tree.isObject());
+        TreeNode origin = tree.get("origin");
+        assertTrue(origin.isValueNode());
+        if (origin instanceof TextNode text) {
+            log.info("origin: {}", text.asText());
+        }
     }
 }
